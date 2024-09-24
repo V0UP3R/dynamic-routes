@@ -1,6 +1,7 @@
 'use client'
 import { useState } from "react";
 import Image from "next/image";
+import VideoPlayer from "@/app/components/VideoPlayer/VideoPlayer";
 
 const Modal = ({ isOpen, onClose, children }:{isOpen:boolean, onClose:() => void, children:React.ReactNode}) => {
   if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
@@ -32,7 +33,15 @@ function Settings(){
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="bg-slate-500 h-screen w-full flex items-center justify-center">
+    <div className="bg-slate-500 h-screen w-full flex flex-col items-center justify-center">
+
+      <div className="text-center m-4">
+      <VideoPlayer
+        src="https://videos.pexels.com/video-files/4524598/4524598-sd_640_360_25fps.mp4"
+        // poster="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8b2NlYW58ZW58MHx8MHx8fDA%3D"
+      />
+      </div>
+
       <button
         onClick={openModal}
         className="bg-blue-600 text-white px-4 py-2 rounded-lg"
