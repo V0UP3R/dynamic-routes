@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
-const Modal = ({ isOpen, onClose, children }:any) => {
+const Modal = ({ isOpen, onClose, children }:{isOpen:boolean, onClose:() => void, children:React.ReactNode}) => {
   if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
 
   return (

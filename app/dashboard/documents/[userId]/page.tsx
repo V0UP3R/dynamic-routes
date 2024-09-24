@@ -12,7 +12,7 @@ export default function UserDocuments({
     public_repos: 0,
     location: "",
   });
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     // Faz a requisição para a API do GitHub

@@ -6,14 +6,14 @@ import { FaBars, FaHome, FaUser, FaCog } from "react-icons/fa";
 
 function NavBar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeItem, setActiveItem] = useState(''); // Estado para o item ativo
+  const [, setActiveItem] = useState(''); // Estado para o item ativo
   const pathname = usePathname()
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  const handleItemClick = (item:any) => {
+  const handleItemClick = (item:string) => {
     setActiveItem(item); // Define o item ativo quando clicado
   };
 
