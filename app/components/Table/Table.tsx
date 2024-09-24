@@ -8,17 +8,54 @@ interface TableProps {
   columns: string[];  
 }
 
+const ProgressBar = ({ progress }: { progress:number }) => {
+  return (
+    <div className="relative w-full h-4 bg-gray-200 rounded">
+      <div
+        className="absolute top-0 left-0 h-full bg-green-500 rounded"
+        style={{ width: `${progress}%` }}
+      />
+    </div>
+  );
+};
+
 const Table: React.FC<TableProps> = ({ data, columns }) => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);  
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [dataState, setDataState] = useState(data.results);
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const totalPages = Math.ceil(data.count / rowsPerPage);
   const currentData = dataState.slice(0, rowsPerPage);
 
   const fetchData = async (page: number, rowsPerPage: number) => {
-    const dataReturn = await fetcher(rowsPerPage, page);
-    setDataState(dataReturn.results);
+    setIsLoading(true);
+    setLoading(true);
+    setProgress(0);
+
+    // Simulate a progress update
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      if (progress >= 100) {
+        clearInterval(progressInterval);
+      } else {
+        progress += 10;
+        setProgress(progress);
+      }
+    }, 200); // Atualiza o progresso a cada 200 ms
+
+    try {
+      const dataReturn = await fetcher(rowsPerPage, page);
+      setDataState(dataReturn.results);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+      setLoading(false);
+      setProgress(100); // Garantir que a barra fique cheia no final
+    }
   };
   
   const handlePageChange = async (page: number) => {
@@ -53,7 +90,19 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-gray-300">
+      <div className="overflow-hidden rounded-lg border border-gray-300 relative">
+      {isLoading && 
+      <div className="flex flex-col items-center justify-center w-full h-full absolute bg-gray-100">
+      <div className="w-4/5 max-w-xl bg-gray-200 rounded-lg relative">
+        <div
+          className="bg-blue-500 h-8 rounded-lg transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+      <span className="mt-2 text-lg font-semibold">{progress}%</span>
+      {loading && <p className="mt-4 text-lg">Carregando...</p>}
+    </div>
+      }
         <div className="max-h-80 overflow-y-auto custom-scrollbar">
           <table className="min-w-full bg-white">
             <thead className="sticky top-0 bg-gray-800 bg-opacity-50 backdrop-blur text-white">
@@ -68,8 +117,8 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
             <tbody>
               {currentData.map((row, rowIndex) => (
                 <tr
-                  key={rowIndex}
-                  className={`border-t border-gray-300 ${rowIndex % 2 === 0 ? 'bg-gray-100' : ''}`}
+                key={rowIndex}
+                className={`border-t border-gray-300 ${rowIndex % 2 === 0 ? 'bg-gray-100' : ''}`}
                 >
                   {columns.map((column, colIndex) => (
                     <td key={colIndex} className="py-2 px-6">

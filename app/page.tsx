@@ -1,101 +1,195 @@
+"use client";
+import Link from "next/link";
 import Image from "next/image";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
-export default function Home() {
+const Board = styled.div`
+  display: grid;
+  grid-template-columns: repeat(30, 20px);
+  grid-template-rows: repeat(30, 20px);
+  gap: 2px;
+  background-color: rgba(51, 51, 51, 0.8); /* Adiciona opacidade */
+  border: none;
+  width: max-content;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 10px;
+  cursor: none; /* Oculta o cursor */
+`;
+
+const Cell = styled.div<{ $isSnake?: boolean; $isFood?: boolean }>`
+  width: 20px;
+  height: 20px;
+  background-color: ${({ $isSnake, $isFood }) =>
+    $isSnake ? "green" : $isFood ? "red" : "#94a3b8"};
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 3rem;
+  z-index: 10;
+`;
+
+const Score = styled.h2`
+  color: white;
+  text-align: center;
+`;
+
+interface Position {
+  x: number;
+  y: number;
+}
+
+const Game: React.FC = () => {
+  const [snake, setSnake] = useState<Position[]>([{ x: 15, y: 15 }]);
+  const [food, setFood] = useState<Position>({ x: 10, y: 10 });
+  const [direction, setDirection] = useState<Position>({ x: 0, y: -1 });
+  const [score, setScore] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const boardSize = 30;
+
+  const generateFood = () => {
+    const newX = Math.floor(Math.random() * boardSize);
+    const newY = Math.floor(Math.random() * boardSize);
+    setFood({ x: newX, y: newY });
+  };
+
+  const moveSnake = () => {
+    const newSnake = [...snake];
+    const head = {
+      x: newSnake[0].x + direction.x,
+      y: newSnake[0].y + direction.y,
+    };
+
+    if (
+      head.x < 0 ||
+      head.x >= boardSize ||
+      head.y < 0 ||
+      head.y >= boardSize
+    ) {
+      setGameOver(true);
+      return;
+    }
+
+    if (
+      newSnake.some((segment) => segment.x === head.x && segment.y === head.y)
+    ) {
+      setGameOver(true);
+      return;
+    }
+
+    newSnake.unshift(head);
+    if (head.x === food.x && head.y === food.y) {
+      setScore(score + 1);
+      generateFood();
+    } else {
+      newSnake.pop();
+    }
+
+    setSnake(newSnake);
+  };
+
+  const changeDirection = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (gameOver) return;
+
+    switch (e.key) {
+      case "ArrowUp":
+        if (direction.y === 0) setDirection({ x: 0, y: -1 });
+        break;
+      case "ArrowDown":
+        if (direction.y === 0) setDirection({ x: 0, y: 1 });
+        break;
+      case "ArrowLeft":
+        if (direction.x === 0) setDirection({ x: -1, y: 0 });
+        break;
+      case "ArrowRight":
+        if (direction.x === 0) setDirection({ x: 1, y: 0 });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const restartGame = () => {
+    setSnake([{ x: 15, y: 15 }]);
+    setFood({ x: 10, y: 10 });
+    setDirection({ x: 0, y: -1 });
+    setScore(0);
+    setGameOver(false);
+  };
+
+  const handleMouseEnter = () => {
+    const gameContainer = document.querySelector(
+      ".game-container"
+    ) as HTMLElement;
+    gameContainer?.focus();
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (!gameOver) {
+        moveSnake();
+      }
+    }, 100);
+
+    return () => clearInterval(intervalId);
+  }, [snake, direction, gameOver]);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="h-screen w-screen flex items-center justify-center bg-zinc-900">
+      <section className="bg-gray-100 w-1/3 h-full flex flex-col items-center justify-center gap-10">
+        <Image width={300} height={300} src="/logo.svg" alt="logo" />
+        <Link href={"/dashboard"}>
+          <button className="bg-gray-900 p-3 min-w-44 rounded-xl shadow-2xl text-gray-100 font-normal text-base m-4 hover:bg-gray-700 duration-500">
+            Playground +
+          </button>
+        </Link>
+      </section>
+      <section className="bg-zinc-900 w-2/3 h-full flex flex-col items-center justify-center">
+        <h1 style={{ textAlign: "center", color: "white" }}>Snake Game</h1>
+        <Score>Score: {score}</Score>
+        <div
+          tabIndex={0}
+          onKeyDown={changeDirection}
+          style={{ outline: "none" }}
+          className="game-container"
+          onMouseEnter={handleMouseEnter}
+        >
+          <Board>
+            {Array.from({ length: boardSize * boardSize }, (_, index) => {
+              const x = index % boardSize;
+              const y = Math.floor(index / boardSize);
+              const isSnake = snake.some(
+                (segment) => segment.x === x && segment.y === y
+              );
+              const isFood = food.x === x && food.y === y;
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+              return <Cell key={index} $isSnake={isSnake} $isFood={isFood} />;
+            })}
+            {gameOver && <Overlay>Game Over! Press F5 to restart</Overlay>}
+          </Board>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div>
+          <button
+            className="bg-indigo-800 p-3 min-w-44 rounded-xl shadow-2xl text-gray-100 font-normal text-base m-4"
+            onClick={restartGame}
+          >
+            Reiniciar Jogo
+          </button>
+        </div>
+      </section>
     </div>
   );
-}
+};
+
+export default Game;
