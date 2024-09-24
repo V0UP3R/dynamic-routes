@@ -1,6 +1,5 @@
 import Table from "../components/Table/Table";
 import { fetcher } from "../actions/fetcher";
-import { TableRows } from "../components/TableRows/TableRows";
 
 async function Dashboard() {
 

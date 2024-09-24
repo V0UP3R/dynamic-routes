@@ -1,5 +1,4 @@
 'use client'
-import UserList from "@/app/components/UserList/UserList";
 import { useState } from "react";
 import Image from "next/image";
 
