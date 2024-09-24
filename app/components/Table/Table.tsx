@@ -1,23 +1,12 @@
 'use client'
 import { fetcher } from '@/app/actions/fetcher';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons/io';
 
 interface TableProps {
   data: { count: number; results: { [key: string]: string | number }[] };  
   columns: string[];  
 }
-
-const ProgressBar = ({ progress }: { progress:number }) => {
-  return (
-    <div className="relative w-full h-4 bg-gray-200 rounded">
-      <div
-        className="absolute top-0 left-0 h-full bg-green-500 rounded"
-        style={{ width: `${progress}%` }}
-      />
-    </div>
-  );
-};
 
 const Table: React.FC<TableProps> = ({ data, columns }) => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);  
