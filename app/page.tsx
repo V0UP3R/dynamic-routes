@@ -176,7 +176,7 @@ const Game: React.FC = () => {
 
               return <Cell key={index} $isSnake={isSnake} $isFood={isFood} />;
             })}
-            {gameOver && <Overlay>Game Over! Press F5 to restart</Overlay>}
+            {gameOver && <Overlay>Game Over!</Overlay>}
           </Board>
         </div>
         <div>
