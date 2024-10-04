@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 
 // Função de debounce
 const useDebounce = (value: string, delay: number) => {
@@ -84,7 +84,7 @@ const MultiSelectFilter: React.FC = () => {
         <div className="flex flex-nowrap text-md justify-between h-full">
           <span className="text-gray-500">Clique para selecionar países</span>
           <div className="h-full flex items-start justify-start">
-          {isActive ? <FaChevronUp/> : <FaChevronDown />}
+          {isActive ? <IoChevronUp /> : <IoChevronDown/>}
           </div>
         </div>
       );
@@ -97,7 +97,7 @@ const MultiSelectFilter: React.FC = () => {
       <div className="relative flex gap-2 justify-between w-full">
         <span className="flex flex-nowrap overflow-x-clip text-md w-5/6">
           {moreCount > 4 ? (
-            <span className="bg-blue-100 text-blue-800 px-2 rounded-md mr-1 whitespace-nowrap">
+            <span className="text-gray-600 font-medium px-2 rounded-md mr-1 whitespace-nowrap">
               {`${moreCount} Selecionados`}
             </span>
           ) : (
@@ -116,7 +116,7 @@ const MultiSelectFilter: React.FC = () => {
             + {moreCount}
           </span>
         )} */}
-        {isActive ? <FaChevronUp /> : <FaChevronDown />}
+        {isActive ? <IoChevronUp /> : <IoChevronDown/>}
       </div>
     );
   };
