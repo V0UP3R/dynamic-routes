@@ -84,7 +84,7 @@ const MultiSelectFilter: React.FC = () => {
         <div className="flex flex-nowrap text-md justify-between h-full">
           <span className="text-gray-500">Clique para selecionar países</span>
           <div className="h-full flex items-start justify-start">
-          {isActive ? <IoChevronUp /> : <IoChevronDown/>}
+            {isActive ? <IoChevronUp /> : <IoChevronDown />}
           </div>
         </div>
       );
@@ -116,7 +116,7 @@ const MultiSelectFilter: React.FC = () => {
             + {moreCount}
           </span>
         )} */}
-        {isActive ? <IoChevronUp /> : <IoChevronDown/>}
+        {isActive ? <IoChevronUp /> : <IoChevronDown />}
       </div>
     );
   };
@@ -133,7 +133,9 @@ const MultiSelectFilter: React.FC = () => {
 
       {/* Mostra o input e a lista ao ativar */}
       {isActive && (
-        <div className="absolute mt-1 pt-2 px-2 left-1/2 transform -translate-x-1/2 w-full flex flex-col justify-center items-center bg-white border rounded-md shadow-lg z-10 max-w-80">
+        <div className="absolute mt-1 pt-2 left-1/2 transform -translate-x-1/2 w-full flex flex-col justify-center items-center bg-white border rounded-md shadow-lg z-10 max-w-80">
+          <div className="w-full px-2">
+
           {/* Input de filtro */}
           <input
             type="text"
@@ -142,11 +144,19 @@ const MultiSelectFilter: React.FC = () => {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
+          </div>
 
           {/* Lista de opções filtradas */}
           <ul className="max-h-40 overflow-y-auto w-full">
             {filteredOptions.map((option) => (
-              <li key={option} className="p-2 hover:bg-gray-200">
+              <li
+                key={option}
+                className={`p-2 ${
+                  selectedOptions.includes(option)
+                    ? "bg-blue-200"
+                    : "hover:bg-gray-200"
+                }`} // Adiciona a classe bg-red-200 se a opção estiver selecionada
+              >
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
