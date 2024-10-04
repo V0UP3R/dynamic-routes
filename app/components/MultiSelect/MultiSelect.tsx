@@ -3,7 +3,7 @@ import axios from "axios";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 
 // Função de debounce
-const useDebounce = (value: string, delay: number) => {
+const useDebounce = (value: string, delay: number): string => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
@@ -20,19 +20,17 @@ const useDebounce = (value: string, delay: number) => {
 };
 
 // Chamada da API com termo de busca
-const fetchCountries = async (query: string) => {
+const fetchCountries = async (query: string): Promise<string[]> => {
   if (!query) return [];
-  const response = await axios.get(
-    `https://restcountries.com/v3.1/name/${query}`
-  );
-  return response.data.map((country: any) => country.name.common);
+  const response = await axios.get(`https://restcountries.com/v3.1/name/${query}`);
+  return response.data.map((country: { name: { common: string } }) => country.name.common);
 };
 
 const MultiSelectFilter: React.FC = () => {
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState<boolean>(false);
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState<string>("");
 
   const debouncedFilter = useDebounce(filter, 1000); // Debounce de 1 segundo
   const dropdownRef = useRef<HTMLDivElement>(null); // Referência para a div do dropdown
@@ -61,10 +59,7 @@ const MultiSelectFilter: React.FC = () => {
 
   // Fecha o dropdown ao clicar fora
   const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       setIsActive(false);
     }
   };
@@ -111,11 +106,6 @@ const MultiSelectFilter: React.FC = () => {
             ))
           )}
         </span>
-        {/* {moreCount > 0 && (
-          <span className="bg-gray-200 text-gray-600 font-semibold px-2 py-1 rounded-md whitespace-nowrap">
-            + {moreCount}
-          </span>
-        )} */}
         {isActive ? <IoChevronUp /> : <IoChevronDown />}
       </div>
     );
@@ -135,15 +125,14 @@ const MultiSelectFilter: React.FC = () => {
       {isActive && (
         <div className="absolute mt-1 pt-2 left-1/2 transform -translate-x-1/2 w-full flex flex-col justify-center items-center bg-white border rounded-md shadow-lg z-10 max-w-80">
           <div className="w-full px-2">
-
-          {/* Input de filtro */}
-          <input
-            type="text"
-            className="border border-gray-300 bg-gray-100 p-2 w-full mb-2 rounded-xl"
-            placeholder="Filtrar países..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          />
+            {/* Input de filtro */}
+            <input
+              type="text"
+              className="border border-gray-300 bg-gray-100 p-2 w-full mb-2 rounded-xl"
+              placeholder="Filtrar países..."
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
           </div>
 
           {/* Lista de opções filtradas */}
@@ -155,7 +144,7 @@ const MultiSelectFilter: React.FC = () => {
                   selectedOptions.includes(option)
                     ? "bg-blue-200"
                     : "hover:bg-gray-200"
-                }`} // Adiciona a classe bg-red-200 se a opção estiver selecionada
+                }`} // Adiciona a classe bg-blue-200 se a opção estiver selecionada
               >
                 <label className="flex items-center space-x-2">
                   <input
