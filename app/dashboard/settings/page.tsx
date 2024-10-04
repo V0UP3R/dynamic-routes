@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import VideoPlayer from "@/app/components/VideoPlayer/VideoPlayer";
+import MultiSelect from "@/app/components/MultiSelect/MultiSelect";
 
 const Modal = ({ isOpen, onClose, children }:{isOpen:boolean, onClose:() => void, children:React.ReactNode}) => {
   if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
@@ -33,8 +34,9 @@ function Settings(){
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="bg-slate-500 h-screen w-full flex flex-col items-center justify-center">
+    <div className="bg-slate-500 h-screen w-full gap-32 flex flex-col items-center justify-center">
 
+      <MultiSelect />
       <div className="text-center m-4">
       <VideoPlayer
         src="https://videos.pexels.com/video-files/4524598/4524598-sd_640_360_25fps.mp4"
@@ -42,6 +44,7 @@ function Settings(){
       />
       </div>
 
+      
       <button
         onClick={openModal}
         className="bg-blue-600 text-white px-4 py-2 rounded-lg"

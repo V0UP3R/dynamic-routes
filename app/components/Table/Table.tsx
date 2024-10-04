@@ -94,7 +94,7 @@ const Table: React.FC<TableProps> = ({ data, columns }) => {
       }
         <div className="max-h-80 overflow-y-auto custom-scrollbar">
           <table className="min-w-full bg-white">
-            <thead className="sticky top-0 bg-gray-800 bg-opacity-50 backdrop-blur text-white">
+            <thead className="sticky top-0 bg-gray-800 bg-opacity-50 backdrop-blur text-white z-50">
               <tr>
                 {columns.map((column, index) => (
                   <th key={index} className="py-3 px-6 text-left font-semibold">
